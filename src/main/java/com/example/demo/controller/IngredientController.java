@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,13 +46,17 @@ public class IngredientController {
     }
 
     public List<Ingredient> getAllIngredientsWithMinAndMaxPrice(double priceMinFilter,double priceMaxFilter, List <Ingredient> list){
-        List<Ingredient> ingredients = list.stream().filter(i -> i.getUnitPrice() >= priceMinFilter && i.getUnitPrice() <= priceMaxFilter).toList();
+        List<Ingredient> ingredients =  list.stream().filter(i -> i.getUnitPrice() >= priceMinFilter && i.getUnitPrice() <= priceMaxFilter).toList();
         return ingredients;
     }
 
     @GetMapping("/ingredients")
     public ResponseEntity<Object> getAll(@RequestParam(name = "priceMinFilter", required = false) Double priceMinFilter, @RequestParam(name = "priceMaxFilter", required = false) Double priceMaxFilter) {
         List<Ingredient> iList = List.of(i1, i2);
+
+        if (priceMaxFilter != null && priceMaxFilter < 0 || priceMinFilter != null && priceMinFilter < 0 || priceMaxFilter != null && priceMinFilter != null && priceMaxFilter < priceMinFilter) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
         List<Ingredient> response = new ArrayList<>();
 
@@ -59,19 +65,20 @@ public class IngredientController {
         }
         else if (priceMaxFilter != null && priceMinFilter == null) {
             response = getAllIngredientsWithMaxPrice(priceMaxFilter, iList);
-           // return ResponseEntity.ok(response);
         }
         else if  (priceMaxFilter != null && priceMinFilter != null) {
             response = getAllIngredientsWithMinAndMaxPrice(priceMinFilter,priceMaxFilter, iList);
-            //return ResponseEntity.ok(response);
         }
-        else response = iList;
+        else if (priceMaxFilter == null && priceMinFilter == null)  response = iList;
+      
         
 
         return ResponseEntity.ok(response);
 
-      //  return ResponseEntity.s;
     }
     
     
 }
+
+// todo: mettre les données statiques dans le package static
+// todo: afficher des messages avec les réponses donnés
