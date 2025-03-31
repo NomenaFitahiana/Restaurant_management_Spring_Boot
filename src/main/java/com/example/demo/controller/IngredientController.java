@@ -91,6 +91,22 @@ public class IngredientController {
 
     }
 
+    @GetMapping("ingredients/{id}")
+    public ResponseEntity<Object> getIngredientById(@PathVariable Long id) {
+        IngredientDto response = new IngredientDto();
+
+        List<IngredientDto> listFiltered = iList.stream().filter(i -> i.getId() == id).toList();
+
+        if (listFiltered.isEmpty()) {
+            String responseBody = "Ingredient " + id + " is not found";
+            return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
+        }
+        else response = listFiltered.get(0);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    
+
     @PostMapping("/ingredients")
     public ResponseEntity<Object> createIngredient(@RequestBody List<IngredientDto> entity) {
         return new ResponseEntity<>(entity, HttpStatus.CREATED);
@@ -98,7 +114,7 @@ public class IngredientController {
     
     @PutMapping("ingredients/{id}")
     public ResponseEntity<Object> putIngredient(@PathVariable Long id, @RequestBody IngredientDto entity) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(entity);
+        return new ResponseEntity<>(entity, HttpStatus.CREATED);
     }
     
 }
