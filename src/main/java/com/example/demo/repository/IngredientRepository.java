@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.example.demo.entity.DishIngredient;
@@ -30,43 +29,8 @@ public class IngredientRepository implements RepositoryInterface<Ingredient> {
         this.dataSource = new DataSource();
     }
 
-    public String Test(){
-        try (Connection connection = dataSource.getConnection()){
-            if (connection != null) {
-                return "Succes!";
-            }
-            else return "Failed !";
-        }catch (SQLException e ){
-            throw new RuntimeException(e);
-        }
-    }
 
     @Override
-    public List<Ingredient> getAll(int page, int size) throws SQLException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAll'");
-    }
-
-    @Override
-    public Ingredient findById(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findById'");
-    }
-
-    @Override
-    public List<Ingredient> filterByCriteria(List<Criteria> criterias, int page, int size, Map<String, String> sort) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'filterByCriteria'");
-    }
-
-    @Override
-    public List<Ingredient> saveAll(List<Ingredient> entities) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveAll'");
-    }
-
-
-    /*@Override
     public List<Ingredient> getAll(int page, int size) {
         List<Ingredient> ingredients = new ArrayList<>();
         try(Connection connection = dataSource.getConnection();
@@ -102,7 +66,7 @@ public class IngredientRepository implements RepositoryInterface<Ingredient> {
         }
     }
 
-   /*@Override
+  /* @Override
     public List<Ingredient> filterByCriteria(List<Criteria> criterias, int page, int size, Map<String, String> sort) {
         List<Ingredient> ingredients = new ArrayList<>();
         List<String> criteriaKey = criterias.stream()
@@ -151,7 +115,7 @@ public class IngredientRepository implements RepositoryInterface<Ingredient> {
            }
         return ingredients;
     }
-
+*/
    @SneakyThrows
     @Override
     public List<Ingredient> saveAll(List<Ingredient> entities) {
@@ -229,17 +193,14 @@ public class IngredientRepository implements RepositoryInterface<Ingredient> {
         return new DishIngredient(dishIngredientId, ingredient, requiredQuantity, unit);
     }
 
+
     @Override
     public List<Ingredient> filterByCriteria(List<Criteria> criterias, int page, int size, Map<String, String> sort) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'filterByCriteria'");
     }
 
-    @Override
-    public List<Ingredient> saveAll(List<Ingredient> entities) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveAll'");
-    }*/
+   
 
    
 }

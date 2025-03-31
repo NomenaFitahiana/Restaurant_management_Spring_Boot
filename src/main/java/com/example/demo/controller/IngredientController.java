@@ -2,10 +2,10 @@ package com.example.demo.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.entity.Ingredient;
 import com.example.demo.entity.IngredientDto;
 import com.example.demo.service.IngredientService;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,49 +23,34 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 public class IngredientController {
-    private IngredientService ingredientService;
-    private IngredientDto i1;
-    private IngredientDto i2;
 
-    @Autowired
-    public IngredientController(IngredientService ingredientService){
+   private IngredientService ingredientService;
+
+   @Autowired
+   public IngredientController(IngredientService ingredientService){
         this.ingredientService = ingredientService;
-    }
-
-        {   i1 = new IngredientDto();
-            i1.setId(1L);
-            i1.setName("Oeuf");
-            i1.setUnitPrice(1000.0);
-            i1.setUpdatedAt(LocalDateTime.parse("2025-03-01T00:00:00"));
-        
-            i2 = new IngredientDto();
-            i2.setId(2L);
-            i2.setName("Huile");
-            i2.setUnitPrice(10000.0);
-            i2.setUpdatedAt(LocalDateTime.parse("2025-03-20T00:00:00"));
-        }
-        
+   }
+  
+      
     
     
+    public List<Ingredient> getAllIngredientsWithMaxPrice(double priceMaxFilter, List<Ingredient> list){
 
-    public List<IngredientDto> getAllIngredientsWithMaxPrice(double priceMaxFilter, List<IngredientDto> list){
-
-       List<IngredientDto> ingredients =  list.stream().filter(i -> i.getUnitPrice() <= priceMaxFilter).toList();
+       List<Ingredient> ingredients =  list.stream().filter(i -> i.getUnitPrice() <= priceMaxFilter).toList();
 
        return ingredients;
     }
 
-    public List<IngredientDto> getAllIngredientsWithMinPrice(double priceMinFilter, List <IngredientDto> list){
-        List<IngredientDto> ingredients = list.stream().filter(i -> i.getUnitPrice() >= priceMinFilter).toList();
+    public List<Ingredient> getAllIngredientsWithMinPrice(double priceMinFilter, List <Ingredient> list){
+        List<Ingredient> ingredients = list.stream().filter(i -> i.getUnitPrice() >= priceMinFilter).toList();
         return ingredients;
     }
 
-    public List<IngredientDto> getAllIngredientsWithMinAndMaxPrice(double priceMinFilter,double priceMaxFilter, List <IngredientDto> list){
-        List<IngredientDto> ingredients =  list.stream().filter(i -> i.getUnitPrice() >= priceMinFilter && i.getUnitPrice() <= priceMaxFilter).toList();
+    public List<Ingredient> getAllIngredientsWithMinAndMaxPrice(double priceMinFilter,double priceMaxFilter, List <Ingredient> list){
+        List<Ingredient> ingredients =  list.stream().filter(i -> i.getUnitPrice() >= priceMinFilter && i.getUnitPrice() <= priceMaxFilter).toList();
         return ingredients;
     }
 
-    List<IngredientDto> iList = List.of(i1, i2);
 
     @GetMapping("/ingredients")
     public ResponseEntity<Object> getAll(@RequestParam(name = "priceMinFilter", required = false) Double priceMinFilter, @RequestParam(name = "priceMaxFilter", required = false) Double priceMaxFilter) {      
@@ -77,9 +62,12 @@ public class IngredientController {
         } 
 
 
-        List<IngredientDto> response = new ArrayList<>();
+        List<Ingredient> response = new ArrayList<>();
+        List<Ingredient> iList = ingredientService.getAll();
+
 
         if (priceMaxFilter == null && priceMinFilter != null) {
+            
             response = getAllIngredientsWithMinPrice(priceMinFilter, iList);
         }
         else if (priceMaxFilter != null && priceMinFilter == null) {
@@ -99,11 +87,11 @@ public class IngredientController {
 
     }
 
-    @GetMapping("ingredients/{id}")
+   /* @GetMapping("ingredients/{id}")
     public ResponseEntity<Object> getIngredientById(@PathVariable Long id) {
-        IngredientDto response = new IngredientDto();
+        Ingredient response = new Ingredient();
 
-        List<IngredientDto> listFiltered = iList.stream().filter(i -> i.getId() == id).toList();
+        List<Ingredient> listFiltered = iList.stream().filter(i -> i.getId() == id).toList();
 
         if (listFiltered.isEmpty()) {
             String responseBody = "Ingredient " + id + " is not found";
@@ -125,10 +113,7 @@ public class IngredientController {
         return new ResponseEntity<>(entity, HttpStatus.CREATED);
     }
 
-    @GetMapping("/ping")
-    public String test() {
-        return ingredientService.test();
-    }
+   */
     
     
 }
