@@ -2,7 +2,7 @@ package com.example.demo.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.entity.Ingredient;
+import com.example.demo.entity.IngredientTest;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,16 +15,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 public class IngredientController {
-    private Ingredient i1;
-    private Ingredient i2;
+    private IngredientTest i1;
+    private IngredientTest i2;
 
-        {   i1 = new Ingredient();
+        {   i1 = new IngredientTest();
             i1.setId(1L);
             i1.setName("Oeuf");
             i1.setUnitPrice(1000.0);
             i1.setUpdatedAt(LocalDateTime.parse("2025-03-01T00:00:00"));
         
-            i2 = new Ingredient();
+            i2 = new IngredientTest();
             i2.setId(2L);
             i2.setName("Huile");
             i2.setUnitPrice(10000.0);
@@ -34,27 +34,27 @@ public class IngredientController {
     
     
 
-    public List<Ingredient> getAllIngredientsWithMaxPrice(double priceMaxFilter, List<Ingredient> list){
+    public List<IngredientTest> getAllIngredientsWithMaxPrice(double priceMaxFilter, List<IngredientTest> list){
 
-       List<Ingredient> ingredients =  list.stream().filter(i -> i.getUnitPrice() <= priceMaxFilter).toList();
+       List<IngredientTest> ingredients =  list.stream().filter(i -> i.getUnitPrice() <= priceMaxFilter).toList();
 
        return ingredients;
     }
 
-    public List<Ingredient> getAllIngredientsWithMinPrice(double priceMinFilter, List <Ingredient> list){
-        List<Ingredient> ingredients = list.stream().filter(i -> i.getUnitPrice() >= priceMinFilter).toList();
+    public List<IngredientTest> getAllIngredientsWithMinPrice(double priceMinFilter, List <IngredientTest> list){
+        List<IngredientTest> ingredients = list.stream().filter(i -> i.getUnitPrice() >= priceMinFilter).toList();
         return ingredients;
     }
 
-    public List<Ingredient> getAllIngredientsWithMinAndMaxPrice(double priceMinFilter,double priceMaxFilter, List <Ingredient> list){
-        List<Ingredient> ingredients =  list.stream().filter(i -> i.getUnitPrice() >= priceMinFilter && i.getUnitPrice() <= priceMaxFilter).toList();
+    public List<IngredientTest> getAllIngredientsWithMinAndMaxPrice(double priceMinFilter,double priceMaxFilter, List <IngredientTest> list){
+        List<IngredientTest> ingredients =  list.stream().filter(i -> i.getUnitPrice() >= priceMinFilter && i.getUnitPrice() <= priceMaxFilter).toList();
         return ingredients;
     }
 
     @GetMapping("/ingredients")
     public ResponseEntity<Object> getAll(@RequestParam(name = "priceMinFilter", required = false) Double priceMinFilter, @RequestParam(name = "priceMaxFilter", required = false) Double priceMaxFilter) {      
 
-        List<Ingredient> iList = List.of(i1, i2);
+        List<IngredientTest> iList = List.of(i1, i2);
 
         if (priceMaxFilter != null && priceMaxFilter < 0 || priceMinFilter != null && priceMinFilter < 0 || priceMaxFilter != null && priceMinFilter != null && priceMaxFilter < priceMinFilter) {
             String responseBody = "Filters can't be a negative value  and priceMaxFilter: " + priceMaxFilter + " can't be smaller than priceMinFilter: " + priceMinFilter;
@@ -62,7 +62,7 @@ public class IngredientController {
         } 
 
 
-        List<Ingredient> response = new ArrayList<>();
+        List<IngredientTest> response = new ArrayList<>();
 
         if (priceMaxFilter == null && priceMinFilter != null) {
             response = getAllIngredientsWithMinPrice(priceMinFilter, iList);
