@@ -1,4 +1,4 @@
-package com.example.demo.repository;
+/*package com.example.demo.repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,7 +20,7 @@ import lombok.SneakyThrows;
 public class DishRepository implements RepositoryInterface<Dish> {
     private final DataSource dataSource = new DataSource();
 
-   /* public void connect(){
+    public void connect(){
         try(Connection connection = dataSource.getConnection();){
             if(connection == null){
                 System.out.println("Failed !");
@@ -29,7 +29,7 @@ public class DishRepository implements RepositoryInterface<Dish> {
         }catch(SQLException e ){
             throw new RuntimeException(e);
         }
-    }*/
+    }
     private final IngredientRepository ingredientCrudOperations = new IngredientRepository();
 
     @Override
@@ -116,4 +116,4 @@ public class DishRepository implements RepositoryInterface<Dish> {
             }
         }
     }
-}
+}*/

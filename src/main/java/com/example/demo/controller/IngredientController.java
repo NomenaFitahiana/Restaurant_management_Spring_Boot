@@ -3,11 +3,13 @@ package com.example.demo.controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.entity.IngredientDto;
+import com.example.demo.service.IngredientService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,8 +23,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 public class IngredientController {
+    private IngredientService ingredientService;
     private IngredientDto i1;
     private IngredientDto i2;
+
+    @Autowired
+    public IngredientController(IngredientService ingredientService){
+        this.ingredientService = ingredientService;
+    }
 
         {   i1 = new IngredientDto();
             i1.setId(1L);
@@ -116,6 +124,12 @@ public class IngredientController {
     public ResponseEntity<Object> putIngredient(@PathVariable Long id, @RequestBody IngredientDto entity) {
         return new ResponseEntity<>(entity, HttpStatus.CREATED);
     }
+
+    @GetMapping("/ping")
+    public String test() {
+        return ingredientService.test();
+    }
+    
     
 }
 

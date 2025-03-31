@@ -1,4 +1,4 @@
-package com.example.demo.service;
+/*package com.example.demo.service;
 
 import java.util.List;
 
@@ -18,4 +18,4 @@ public class RestaurantService {
     public List<Dish> getAll(){
        return d.getAll(1, 2);
     }
-}
+}*/
