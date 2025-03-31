@@ -12,6 +12,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+
 
 @RestController
 public class IngredientController {
@@ -51,10 +57,11 @@ public class IngredientController {
         return ingredients;
     }
 
+    List<IngredientDto> iList = List.of(i1, i2);
+
     @GetMapping("/ingredients")
     public ResponseEntity<Object> getAll(@RequestParam(name = "priceMinFilter", required = false) Double priceMinFilter, @RequestParam(name = "priceMaxFilter", required = false) Double priceMaxFilter) {      
 
-        List<IngredientDto> iList = List.of(i1, i2);
 
         if (priceMaxFilter != null && priceMaxFilter < 0 || priceMinFilter != null && priceMinFilter < 0 || priceMaxFilter != null && priceMinFilter != null && priceMaxFilter < priceMinFilter) {
             String responseBody = "Filters can't be a negative value  and priceMaxFilter: " + priceMaxFilter + " can't be smaller than priceMinFilter: " + priceMinFilter;
@@ -83,9 +90,16 @@ public class IngredientController {
         
 
     }
+
+    @PostMapping("/ingredients")
+    public ResponseEntity<Object> createIngredient(@RequestBody List<IngredientDto> entity) {
+        return new ResponseEntity<>(entity, HttpStatus.CREATED);
+    }
     
+    @PutMapping("ingredients/{id}")
+    public ResponseEntity<Object> putIngredient(@PathVariable Long id, @RequestBody IngredientDto entity) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(entity);
+    }
     
 }
 
-// todo: mettre les données statiques dans le package static
-// todo: afficher des messages avec les réponses donnés
