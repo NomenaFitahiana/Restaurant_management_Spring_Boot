@@ -24,7 +24,7 @@ public class Ingredient {
     private List<Price> prices;
     private List<StockMovement> stockMovements;
 
-   /* public List<StockMovement> addStockMovements(List<StockMovement> stockMovements) {
+   public List<StockMovement> addStockMovements(List<StockMovement> stockMovements) {
         stockMovements.forEach(stockMovement -> stockMovement.setIngredient(this));
         if (getStockMovements() == null || getStockMovements().isEmpty()){
             return stockMovements;
@@ -80,5 +80,5 @@ public class Ingredient {
 
     private Optional<Price> findActualPrice() {
         return prices.stream().max(Comparator.comparing(Price::getDateValue));
-    }*/
+    }
 }

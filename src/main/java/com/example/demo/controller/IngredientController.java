@@ -9,7 +9,6 @@ import com.example.demo.service.IngredientService;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,55 +32,24 @@ public class IngredientController {
       
     
     
-    public List<Ingredient> getAllIngredientsWithMaxPrice(double priceMaxFilter, List<Ingredient> list){
-
-       List<Ingredient> ingredients =  list.stream().filter(i -> i.getUnitPrice() <= priceMaxFilter).toList();
-
-       return ingredients;
-    }
-
-    public List<Ingredient> getAllIngredientsWithMinPrice(double priceMinFilter, List <Ingredient> list){
-        List<Ingredient> ingredients = list.stream().filter(i -> i.getUnitPrice() >= priceMinFilter).toList();
-        return ingredients;
-    }
-
-    public List<Ingredient> getAllIngredientsWithMinAndMaxPrice(double priceMinFilter,double priceMaxFilter, List <Ingredient> list){
-        List<Ingredient> ingredients =  list.stream().filter(i -> i.getUnitPrice() >= priceMinFilter && i.getUnitPrice() <= priceMaxFilter).toList();
-        return ingredients;
-    }
+   
 
 
     @GetMapping("/ingredients")
-    public ResponseEntity<Object> getAll(@RequestParam(name = "priceMinFilter", required = false) Double priceMinFilter, @RequestParam(name = "priceMaxFilter", required = false) Double priceMaxFilter) {      
+    public ResponseEntity<Object> getAll(@RequestParam(name = "priceMinFilter", required = false) Double priceMinFilter, @RequestParam(name = "priceMaxFilter", required = false) Double priceMaxFilter) {     
 
+        List<Ingredient> iList = ingredientService.getAll(priceMinFilter, priceMaxFilter);
 
-        if (priceMaxFilter != null && priceMaxFilter < 0 || priceMinFilter != null && priceMinFilter < 0 || priceMaxFilter != null && priceMinFilter != null && priceMaxFilter < priceMinFilter) {
+        if (iList == null) {
             String responseBody = "Filters can't be a negative value  and priceMaxFilter: " + priceMaxFilter + " can't be smaller than priceMinFilter: " + priceMinFilter;
-            return new ResponseEntity<>( responseBody, HttpStatus.BAD_REQUEST);
-        } 
 
-
-        List<Ingredient> response = new ArrayList<>();
-        List<Ingredient> iList = ingredientService.getAll();
-
-
-        if (priceMaxFilter == null && priceMinFilter != null) {
-            
-            response = getAllIngredientsWithMinPrice(priceMinFilter, iList);
+            return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
         }
-        else if (priceMaxFilter != null && priceMinFilter == null) {
-            response = getAllIngredientsWithMaxPrice(priceMaxFilter, iList);
-        }
-        else if  (priceMaxFilter != null && priceMinFilter != null) {
-            response = getAllIngredientsWithMinAndMaxPrice(priceMinFilter,priceMaxFilter, iList);
-        }
-        else if (priceMaxFilter == null && priceMinFilter == null)  response = iList;
-      
-        
+       
 
         System.out.println("priceMinFilter: " + priceMinFilter);
         System.out.println("priceMaxFilter: " + priceMaxFilter);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(iList);
         
 
     }

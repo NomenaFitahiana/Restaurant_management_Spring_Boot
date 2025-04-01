@@ -1,7 +1,12 @@
 package com.example.demo.service;
 
+import java.lang.foreign.Linker.Option;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.Ingredient;
@@ -16,8 +21,46 @@ public class IngredientService {
         this.ingredientRepository = ingredientRepository;
     }
 
-   public List<Ingredient> getAll(){
-    return ingredientRepository.getAll(1, 5);
+    public List<Ingredient> getAllIngredientsWithMaxPrice(double priceMaxFilter, List<Ingredient> list){
+
+        List<Ingredient> ingredients =  list.stream().filter(i -> i.getActualPrice() <= priceMaxFilter).toList();
+ 
+        return ingredients;
+     }
+ 
+     public List<Ingredient> getAllIngredientsWithMinPrice(double priceMinFilter, List <Ingredient> list){
+         List<Ingredient> ingredients = list.stream().filter(i -> i.getActualPrice() >= priceMinFilter).toList();
+         return ingredients;
+     }
+ 
+     public List<Ingredient> getAllIngredientsWithMinAndMaxPrice(double priceMinFilter,double priceMaxFilter, List <Ingredient> list){
+         List<Ingredient> ingredients =  list.stream().filter(i -> i.getActualPrice() >= priceMinFilter && i.getUnitPrice() <= priceMaxFilter).toList();
+         return ingredients;
+     }
+
+   public List<Ingredient> getAll(Double priceMinFilter, Double priceMaxFilter){
+
+        if (priceMaxFilter != null && priceMaxFilter < 0 || priceMinFilter != null && priceMinFilter < 0 || priceMaxFilter != null && priceMinFilter != null && priceMaxFilter < priceMinFilter) {
+            return null;
+        } 
+                
+        List<Ingredient> response = new ArrayList<>();
+        List<Ingredient> ingredients = ingredientRepository.getAll(1, 5);
+
+
+        if (priceMaxFilter == null && priceMinFilter != null) {
+            
+            response = getAllIngredientsWithMinPrice(priceMinFilter, ingredients);
+        }
+        else if (priceMaxFilter != null && priceMinFilter == null) {
+            response = getAllIngredientsWithMaxPrice(priceMaxFilter, ingredients);
+        }
+        else if  (priceMaxFilter != null && priceMinFilter != null) {
+            response = getAllIngredientsWithMinAndMaxPrice(priceMinFilter,priceMaxFilter, ingredients);
+        }
+        else if (priceMaxFilter == null && priceMinFilter == null)  response = ingredients;
+
+    return response;
    }
 
    public Ingredient findById(Long id){
