@@ -2,7 +2,6 @@ package com.example.demo.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.Ingredient;
@@ -12,7 +11,7 @@ import com.example.demo.repository.IngredientRepository;
 public class IngredientService {
     private IngredientRepository ingredientRepository;
 
-    @Autowired
+    
     public IngredientService (IngredientRepository ingredientRepository){
         this.ingredientRepository = ingredientRepository;
     }
@@ -30,5 +29,9 @@ public class IngredientService {
 
     System.out.println(ingredient);
     return ingredient;
+   }
+
+   public List<Ingredient> saveAll(List<Ingredient> entity){
+    return ingredientRepository.saveAll(entity);
    }
 }

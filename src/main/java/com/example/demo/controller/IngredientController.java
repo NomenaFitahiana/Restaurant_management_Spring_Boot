@@ -26,7 +26,6 @@ public class IngredientController {
 
    private IngredientService ingredientService;
 
-   @Autowired
    public IngredientController(IngredientService ingredientService){
         this.ingredientService = ingredientService;
    }
@@ -101,13 +100,17 @@ public class IngredientController {
     
 
     @PostMapping("/ingredients")
-    public ResponseEntity<Object> createIngredient(@RequestBody List<IngredientDto> entity) {
-        return new ResponseEntity<>(entity, HttpStatus.CREATED);
+    public ResponseEntity<Object> createIngredient(@RequestBody List<Ingredient> entity) {
+        List<Ingredient> ingredients = ingredientService.saveAll(entity);
+
+        return new ResponseEntity<>(ingredients, HttpStatus.CREATED);
     }
     
     @PutMapping("ingredients/{id}")
-    public ResponseEntity<Object> putIngredient(@PathVariable Long id, @RequestBody IngredientDto entity) {
-        return new ResponseEntity<>(entity, HttpStatus.CREATED);
+    public ResponseEntity<Object> putIngredient(@RequestBody List<Ingredient> entity) {
+        List<Ingredient> ingredients = ingredientService.saveAll(entity);
+
+        return new ResponseEntity<>(ingredients, HttpStatus.CREATED);
     }
 
    
