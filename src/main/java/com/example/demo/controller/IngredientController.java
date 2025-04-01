@@ -87,18 +87,15 @@ public class IngredientController {
 
     }
 
-   /* @GetMapping("ingredients/{id}")
+    @GetMapping("ingredients/{id}")
     public ResponseEntity<Object> getIngredientById(@PathVariable Long id) {
-        Ingredient response = new Ingredient();
+        Ingredient response =ingredientService.findById(id);
 
-        List<Ingredient> listFiltered = iList.stream().filter(i -> i.getId() == id).toList();
-
-        if (listFiltered.isEmpty()) {
+        if (response == null) {
             String responseBody = "Ingredient " + id + " is not found";
             return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
         }
-        else response = listFiltered.get(0);
-
+        
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
@@ -113,7 +110,7 @@ public class IngredientController {
         return new ResponseEntity<>(entity, HttpStatus.CREATED);
     }
 
-   */
+   
     
     
 }

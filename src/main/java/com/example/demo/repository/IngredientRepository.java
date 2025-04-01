@@ -59,7 +59,7 @@ public class IngredientRepository implements RepositoryInterface<Ingredient> {
                 if (resultSet.next()) {
                     return mapFromResultSet(resultSet);
                 }
-                throw new RuntimeException("Ingredient.id=" + id + " not found");
+                return null;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

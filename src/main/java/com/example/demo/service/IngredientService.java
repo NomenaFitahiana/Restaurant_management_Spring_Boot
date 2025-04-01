@@ -20,4 +20,15 @@ public class IngredientService {
    public List<Ingredient> getAll(){
     return ingredientRepository.getAll(1, 5);
    }
+
+   public Ingredient findById(Long id){
+    Ingredient ingredient = ingredientRepository.findById(id);
+
+    if (ingredient == null) {
+        return null;
+    }
+
+    System.out.println(ingredient);
+    return ingredient;
+   }
 }
