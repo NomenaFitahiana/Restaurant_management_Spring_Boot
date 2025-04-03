@@ -19,7 +19,7 @@ public class IngredientService {
     
     public IngredientService (IngredientRepository ingredientRepository){
         this.ingredientRepository = ingredientRepository;
-    }
+    }   
 
     public List<Ingredient> getAllIngredientsWithMaxPrice(double priceMaxFilter, List<Ingredient> list){
 

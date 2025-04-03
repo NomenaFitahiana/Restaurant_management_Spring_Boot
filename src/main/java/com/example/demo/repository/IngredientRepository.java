@@ -15,6 +15,7 @@ import com.example.demo.entity.Ingredient;
 import com.example.demo.entity.Price;
 import com.example.demo.entity.StockMovement;
 import com.example.demo.entity.Unit;
+import com.example.demo.repository.mapper.IngredientMapper;
 import com.jayway.jsonpath.Criteria;
 
 import lombok.SneakyThrows;
@@ -24,9 +25,11 @@ public class IngredientRepository implements RepositoryInterface<Ingredient> {
     private final DataSource dataSource;
     private final PriceRepository priceCrudOperations = new PriceRepository();
     private final StockMovementRepository stockMovementCrudOperations = new StockMovementRepository();
+    private final IngredientMapper ingredientMapper;
 
     public IngredientRepository(){
         this.dataSource = new DataSource();
+        this.ingredientMapper = new IngredientMapper(priceCrudOperations, stockMovementCrudOperations);
     }
 
 
@@ -39,9 +42,11 @@ public class IngredientRepository implements RepositoryInterface<Ingredient> {
             preparedStatement.setInt(1, size);
             preparedStatement.setInt(2, size*(page-1));
             ResultSet resultSet = preparedStatement.executeQuery();
+
             while(resultSet.next()){
-                ingredients.add(mapFromResultSet(resultSet));
+                ingredients.add(ingredientMapper.apply(resultSet));
             }
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -57,7 +62,8 @@ public class IngredientRepository implements RepositoryInterface<Ingredient> {
             statement.setLong(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return mapFromResultSet(resultSet);
+                    Ingredient ingredient = ingredientMapper.apply(resultSet);
+                    return ingredient ;
                 }
                 return null;
             }
@@ -145,7 +151,7 @@ public class IngredientRepository implements RepositoryInterface<Ingredient> {
                         }
                     });
                     while (resultSet.next()) {
-                        ingredients.add(mapFromResultSet(resultSet));
+                        ingredients.add(ingredientMapper.apply(resultSet));
                     }
                 }
                 return ingredients;
@@ -162,7 +168,7 @@ public class IngredientRepository implements RepositoryInterface<Ingredient> {
             statement.setLong(1, dishId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    Ingredient ingredient = mapFromResultSet(resultSet);
+                    Ingredient ingredient = ingredientMapper.apply(resultSet);
                     DishIngredient dishIngredient = mapDishIngredient(resultSet, ingredient);
                     dishIngredients.add(dishIngredient);
                 }
@@ -173,18 +179,7 @@ public class IngredientRepository implements RepositoryInterface<Ingredient> {
         }
     }
 
-    private Ingredient mapFromResultSet(ResultSet resultSet) throws SQLException {
-        Long idIngredient = resultSet.getLong("id");
-        List<Price> ingredientPrices = priceCrudOperations.findByIdIngredient(idIngredient);
-        List<StockMovement> ingredientStockMovements = stockMovementCrudOperations.findByIdIngredient(idIngredient);
-
-        Ingredient ingredient = new Ingredient();
-        ingredient.setId(idIngredient);
-        ingredient.setName(resultSet.getString("name"));
-        ingredient.setPrices(ingredientPrices);
-        ingredient.setStockMovements(ingredientStockMovements);
-        return ingredient;
-    }
+   
 
     private DishIngredient mapDishIngredient(ResultSet resultSet, Ingredient ingredient) throws SQLException {
         double requiredQuantity = resultSet.getDouble("required_quantity");

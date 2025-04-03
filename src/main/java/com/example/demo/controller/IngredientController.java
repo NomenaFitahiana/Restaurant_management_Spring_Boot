@@ -3,10 +3,8 @@ package com.example.demo.controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.entity.Ingredient;
-import com.example.demo.entity.IngredientDto;
 import com.example.demo.service.IngredientService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -29,12 +27,6 @@ public class IngredientController {
         this.ingredientService = ingredientService;
    }
   
-      
-    
-    
-   
-
-
     @GetMapping("/ingredients")
     public ResponseEntity<Object> getAll(@RequestParam(name = "priceMinFilter", required = false) Double priceMinFilter, @RequestParam(name = "priceMaxFilter", required = false) Double priceMaxFilter) {     
 
@@ -86,3 +78,4 @@ public class IngredientController {
     
 }
 
+// todo: gerer  les exceptions par les classes approppriées
