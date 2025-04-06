@@ -1,6 +1,7 @@
 package com.example.demo.repository;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,22 +10,63 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.stereotype.Repository;
+
 import com.example.demo.entity.Price;
+import com.example.demo.repository.mapper.PriceMapper;
 import com.jayway.jsonpath.Criteria;
 
 import lombok.SneakyThrows;
 
+@Repository
 public class PriceRepository implements RepositoryInterface<Price> {
-     private final DataSource dataSource = new DataSource();
+     private final DataSource dataSource;
+     private final PriceMapper priceMapper;
+
+     public PriceRepository(){
+        this.dataSource = new DataSource();
+        this.priceMapper = new PriceMapper();
+     }
 
     @Override
     public List<Price> getAll(int page, int size) {
-        throw new UnsupportedOperationException("Not supported yet.");
+         List<Price> prices = new ArrayList<>();
+
+        try(Connection connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("select p.id, p.amount, p.date_value, p.id_ingredient from " +
+                    "price limit ? offset ?")) {
+            preparedStatement.setInt(1, size);
+            preparedStatement.setInt(2, size*(page-1));
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while(resultSet.next()){
+                prices.add(priceMapper.apply(resultSet));
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return  prices;
     }
 
     @Override
     public Price findById(Long id) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Price price = new Price();
+        try(Connection connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("select p.id, p.amount, p.date_value, p.id_ingredient from " +
+                    "price")) {
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next()){
+              price =   priceMapper.apply(resultSet);
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return  price;
     }
 
   /*   @Override
@@ -71,11 +113,7 @@ public class PriceRepository implements RepositoryInterface<Price> {
 
         return prices;
     }
-
-    @Override
-    public List<Price> filterByCriteria(List<Criteria> criterias, int page, int size, Map<String, String> sort) {
-        throw new UnsupportedOperationException("Not supported yet");
-    }
+*/
 
     @SneakyThrows
     @Override
@@ -99,12 +137,12 @@ public class PriceRepository implements RepositoryInterface<Price> {
             });
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    prices.add(mapFromResultSet(resultSet));
+                    prices.add(priceMapper.apply(resultSet));
                 }
             }
             return prices;
         }
-    }*/
+    }
 
     public List<Price> findByIdIngredient(Long idIngredient) {
         List<Price> prices = new ArrayList<>();
@@ -115,7 +153,7 @@ public class PriceRepository implements RepositoryInterface<Price> {
             statement.setLong(1, idIngredient);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    Price price = mapFromResultSet(resultSet);
+                    Price price = priceMapper.apply(resultSet);
                     prices.add(price);
                 }
                 return prices;
@@ -125,23 +163,15 @@ public class PriceRepository implements RepositoryInterface<Price> {
         }
     }
 
-    private Price mapFromResultSet(ResultSet resultSet) throws SQLException {
-        Price price = new Price();
-        price.setId(resultSet.getLong("id"));
-        price.setAmount(resultSet.getDouble("amount"));
-        price.setDateValue(resultSet.getDate("date_value").toLocalDate());
-        return price;
-    }
-
     @Override
     public List<Price> filterByCriteria(List<Criteria> criterias, int page, int size, Map<String, String> sort) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'filterByCriteria'");
     }
 
-    @Override
-    public List<Price> saveAll(List<Price> entities) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveAll'");
-    }
 }
+
+// todo: mregler saveAll an'ilay price - date
+// todo: manao ny mapper sy ny saveAll an'ny stock 
+// todo: rehefa manao addPrice || addStock => saveAll
+
