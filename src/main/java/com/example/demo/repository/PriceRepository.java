@@ -55,7 +55,8 @@ public class PriceRepository implements RepositoryInterface<Price> {
         Price price = new Price();
         try(Connection connection = dataSource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement("select p.id, p.amount, p.date_value, p.id_ingredient from " +
-                    "price")) {
+                    "price where id = ?")) {
+             preparedStatement.setLong(1, id);
 
             ResultSet resultSet = preparedStatement.executeQuery();
 

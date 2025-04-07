@@ -4,27 +4,77 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.stereotype.Repository;
+
+import com.example.demo.entity.Price;
 import com.example.demo.entity.StockMovement;
 import com.example.demo.entity.StockMovementType;
 import com.example.demo.entity.Unit;
+import com.example.demo.repository.mapper.PriceMapper;
+import com.example.demo.repository.mapper.StockMovementMapper;
 import com.jayway.jsonpath.Criteria;
 
+@Repository
 public class StockMovementRepository implements RepositoryInterface<StockMovement> {
-     private final DataSource dataSource = new DataSource();
+    private final DataSource dataSource;
+     private final StockMovementMapper stockMovementMapper;
+
+     public StockMovementRepository(){
+        this.dataSource = new DataSource();
+        this.stockMovementMapper = new StockMovementMapper();
+     }
+
 
     @Override
     public List<StockMovement> getAll(int page, int size) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        List<StockMovement> stocks = new ArrayList<>();
+
+        try(Connection connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("select p.id, p.quantity, p.unit, p.movement_type, p.creation_datetime, p.id_ingredient from " +
+                    "stock_movement limit ? offset ?")) {
+            preparedStatement.setInt(1, size);
+            preparedStatement.setInt(2, size*(page-1));
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while(resultSet.next()){
+                stocks.add(stockMovementMapper.apply(resultSet));
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return  stocks;
     }
+
+
 
     @Override
     public StockMovement findById(Long id) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        StockMovement stock = new StockMovement();
+
+        try(Connection connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("select p.id, p.quantity, p.unit, p.movement_type, p.creation_datetime, p.id_ingredient from stock_movement where id = ?")) {
+          
+            preparedStatement.setLong(1, id);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while(resultSet.next()){
+                stock = stockMovementMapper.apply(resultSet);
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return  stock;
     }
 
    /* @Override
@@ -165,7 +215,36 @@ public class StockMovementRepository implements RepositoryInterface<StockMovemen
 
     @Override
     public List<StockMovement> saveAll(List<StockMovement> entities) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveAll'");
+        List<StockMovement> stock = new ArrayList<>();
+
+        try (Connection connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("insert into stock_movement (id, quantity, unit, movement_type, creation_datetime, id_ingredient) " + "values (?, ?, ?, ?, ?, ?)" + "returning id, quantity, unit, movement_type, creation_datetime, id_ingredient ");){
+            
+                entities.forEach(s -> {
+                  try {
+                    preparedStatement.setLong(1, s.getId());
+                    preparedStatement.setDouble(2, s.getQuantity());
+                    preparedStatement.setObject(3, s.getUnit(), Types.OTHER);
+                    preparedStatement.setObject(4, s.getMovementType(), Types.OTHER);
+                    preparedStatement.setTimestamp(5, Timestamp.from(s.getCreationDatetime()));
+                    preparedStatement.setLong(6, s.getIngredient().getId());
+                    preparedStatement.addBatch();
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                    
+                });
+
+                try(ResultSet resultSet = preparedStatement.executeQuery()){
+                    while (resultSet.next()) {
+                        stock.add(stockMovementMapper.apply(resultSet));
+                    }
+                }
+
+                return stock;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+      
     }
 }
