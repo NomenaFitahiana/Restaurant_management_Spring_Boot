@@ -14,6 +14,7 @@ import com.example.demo.entity.DishIngredient;
 import com.example.demo.entity.Ingredient;
 import com.example.demo.entity.Unit;
 import com.example.demo.repository.mapper.IngredientMapper;
+import com.example.demo.service.Exceptions.NotFoundException;
 import com.jayway.jsonpath.Criteria;
 
 import lombok.SneakyThrows;
@@ -63,7 +64,8 @@ public class IngredientRepository implements RepositoryInterface<Ingredient> {
                     Ingredient ingredient = ingredientMapper.apply(resultSet);
                     return ingredient ;
                 }
-                throw new NotFoundException("Ingredient.id=" + id + " not found");            }
+                throw new NotFoundException("Ingredient " + id + " id not found !");
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -144,7 +146,7 @@ public class IngredientRepository implements RepositoryInterface<Ingredient> {
                             priceCrudOperations.saveAll(entityToSave.getPrices());
                             stockMovementCrudOperations.saveAll(entityToSave.getStockMovements());
                         } catch (Exception e) {
-                            throw new RuntimeException(e);
+                            throw new NotFoundException("Error while saving ingredients !");
                         }
                     });
                     while (resultSet.next()) {
