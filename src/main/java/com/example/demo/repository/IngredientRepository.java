@@ -12,8 +12,6 @@ import org.springframework.stereotype.Repository;
 
 import com.example.demo.entity.DishIngredient;
 import com.example.demo.entity.Ingredient;
-import com.example.demo.entity.Price;
-import com.example.demo.entity.StockMovement;
 import com.example.demo.entity.Unit;
 import com.example.demo.repository.mapper.IngredientMapper;
 import com.jayway.jsonpath.Criteria;
@@ -65,8 +63,7 @@ public class IngredientRepository implements RepositoryInterface<Ingredient> {
                     Ingredient ingredient = ingredientMapper.apply(resultSet);
                     return ingredient ;
                 }
-                return null;
-            }
+                throw new NotFoundException("Ingredient.id=" + id + " not found");            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
