@@ -122,42 +122,51 @@ public class IngredientRepository implements RepositoryInterface<Ingredient> {
         return ingredients;
     }
 */
-   @SneakyThrows
-    @Override
-    public List<Ingredient> saveAll(List<Ingredient> entities) {
-        List<Ingredient> ingredients = new ArrayList<>();
-        try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement =
-                         connection.prepareStatement("insert into ingredient (id, name) values (?, ?)"
-                                 + " on conflict (id) do update set name=excluded.name"
-                                 + " returning id, name")) {
-                entities.forEach(entityToSave -> {
-                    try {
-
-                        statement.setLong(1, entityToSave.getId());
-                        statement.setString(2, entityToSave.getName());
-                        statement.addBatch();
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-                try (ResultSet resultSet = statement.executeQuery()) {
-                    entities.forEach(entityToSave -> {
-                        try {
-                            priceCrudOperations.saveAll(entityToSave.getPrices());
-                            stockMovementCrudOperations.saveAll(entityToSave.getStockMovements());
-                        } catch (Exception e) {
-                            throw new ServerException("Error while saving ingredients !");
-                        }
-                    });
-                    while (resultSet.next()) {
-                        ingredients.add(ingredientMapper.apply(resultSet));
+@SneakyThrows
+@Override
+public List<Ingredient> saveAll(List<Ingredient> entities) {
+    List<Ingredient> savedIngredients = new ArrayList<>();
+    
+    try (Connection connection = dataSource.getConnection()) {
+        connection.setAutoCommit(false);
+        
+        try (PreparedStatement statement = connection.prepareStatement(
+                "INSERT INTO ingredient (id, name) VALUES (?, ?) " +
+                "ON CONFLICT (id) DO UPDATE SET name = excluded.name " +
+                "RETURNING id, name")) {
+            
+            for (Ingredient entity : entities) {
+                statement.setLong(1, entity.getId());
+                statement.setString(2, entity.getName());
+                
+                try (ResultSet rs = statement.executeQuery()) {
+                    if (rs.next()) {
+                        Ingredient saved = new Ingredient();
+                        saved.setId(rs.getLong("id"));
+                        saved.setName(rs.getString("name"));
+                        savedIngredients.add(saved);
                     }
                 }
-                return ingredients;
+                
+                if (entity.getPrices() != null && !entity.getPrices().isEmpty()) {
+                    entity.getPrices().forEach(p -> p.setIngredient(entity));
+                    priceCrudOperations.saveAll(entity.getPrices());
+                }
+                
+                if (entity.getStockMovements() != null && !entity.getStockMovements().isEmpty()) {
+                    entity.getStockMovements().forEach(sm -> sm.setIngredient(entity));
+                    stockMovementCrudOperations.saveAll(entity.getStockMovements());
+                }
             }
+            
+            connection.commit();
+            return savedIngredients;
+        } catch (SQLException e) {
+            connection.rollback();
+            throw new ServerException(e);
         }
     }
+}
 
     public List<DishIngredient> findByDishId(Long dishId) {
         List<DishIngredient> dishIngredients = new ArrayList<>();
