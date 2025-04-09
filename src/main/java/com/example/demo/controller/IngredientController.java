@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.entity.Ingredient;
 import com.example.demo.service.IngredientService;
-
+import com.example.demo.service.Exceptions.*;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -30,47 +30,59 @@ public class IngredientController {
     @GetMapping("/ingredients")
     public ResponseEntity<Object> getAll(@RequestParam(name = "priceMinFilter", required = false) Double priceMinFilter, @RequestParam(name = "priceMaxFilter", required = false) Double priceMaxFilter) {     
 
-        List<Ingredient> iList = ingredientService.getAll(priceMinFilter, priceMaxFilter);
-
-        if (iList == null) {
-            String responseBody = "Filters can't be a negative value  and priceMaxFilter: " + priceMaxFilter + " can't be smaller than priceMinFilter: " + priceMinFilter;
-
-            return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
-        }
-       
-
-        System.out.println("priceMinFilter: " + priceMinFilter);
-        System.out.println("priceMaxFilter: " + priceMaxFilter);
-        return ResponseEntity.ok(iList);
-        
+        try {
+            List<Ingredient> iList = ingredientService.getAll(priceMinFilter, priceMaxFilter);
+            return new ResponseEntity<>(iList, HttpStatus.OK);
+        } catch (ClientException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }catch (NotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }catch (ServerException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }      
 
     }
 
     @GetMapping("ingredients/{id}")
     public ResponseEntity<Object> getIngredientById(@PathVariable Long id) {
-        Ingredient response =ingredientService.findById(id);
-
-        if (response == null) {
-            String responseBody = "Ingredient " + id + " is not found";
-            return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
-        }
-        
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        try {
+            Ingredient response =ingredientService.findById(id);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }catch (ClientException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }catch (ServerException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }           
     }
     
 
     @PostMapping("/ingredients")
     public ResponseEntity<Object> createIngredient(@RequestBody List<Ingredient> entity) {
-        List<Ingredient> ingredients = ingredientService.saveAll(entity);
+        try {
+            List<Ingredient> ingredients = ingredientService.saveAll(entity);
+            return new ResponseEntity<>(ingredients, HttpStatus.CREATED);
+        } catch (ServerException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
-        return new ResponseEntity<>(ingredients, HttpStatus.CREATED);
     }
     
     @PutMapping("ingredients/{id}")
     public ResponseEntity<Object> putIngredient(@RequestBody List<Ingredient> entity) {
-        List<Ingredient> ingredients = ingredientService.saveAll(entity);
+        try {
+            List<Ingredient> ingredients = ingredientService.saveAll(entity);
 
-        return new ResponseEntity<>(ingredients, HttpStatus.CREATED);
+            return new ResponseEntity<>(ingredients, HttpStatus.ACCEPTED);
+        }catch (NotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }catch (ClientException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }catch (ServerException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }      
+       
     }
 
    

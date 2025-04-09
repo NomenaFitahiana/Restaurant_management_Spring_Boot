@@ -15,6 +15,7 @@ import com.example.demo.entity.Ingredient;
 import com.example.demo.entity.Unit;
 import com.example.demo.repository.mapper.IngredientMapper;
 import com.example.demo.service.Exceptions.NotFoundException;
+import com.example.demo.service.Exceptions.ServerException;
 import com.jayway.jsonpath.Criteria;
 
 import lombok.SneakyThrows;
@@ -146,7 +147,7 @@ public class IngredientRepository implements RepositoryInterface<Ingredient> {
                             priceCrudOperations.saveAll(entityToSave.getPrices());
                             stockMovementCrudOperations.saveAll(entityToSave.getStockMovements());
                         } catch (Exception e) {
-                            throw new NotFoundException("Error while saving ingredients !");
+                            throw new ServerException("Error while saving ingredients !");
                         }
                     });
                     while (resultSet.next()) {
