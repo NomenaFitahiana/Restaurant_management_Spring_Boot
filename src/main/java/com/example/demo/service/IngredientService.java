@@ -41,14 +41,15 @@ public class IngredientService {
          return ingredients;
      }
 
-   public List<Ingredient> getAll(Double priceMinFilter, Double priceMaxFilter){
+   public List<Ingredient> getAll(Double priceMinFilter, Double priceMaxFilter, Integer  page, Integer size){
 
+    
         if (priceMaxFilter != null && priceMaxFilter < 0 || priceMinFilter != null && priceMinFilter < 0 || priceMaxFilter != null && priceMinFilter != null && priceMaxFilter < priceMinFilter) {
             return null;
         } 
-                
+    
         List<Ingredient> response = new ArrayList<>();
-        List<Ingredient> ingredients = ingredientRepository.getAll(1, 5);
+        List<Ingredient> ingredients = ingredientRepository.getAll(page, size);
 
 
         if (priceMaxFilter == null && priceMinFilter != null) {

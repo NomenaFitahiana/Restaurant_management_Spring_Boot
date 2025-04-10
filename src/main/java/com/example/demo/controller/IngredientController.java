@@ -35,10 +35,10 @@ public class IngredientController {
  
   
     @GetMapping("/ingredients")
-    public ResponseEntity<Object> getAll(@RequestParam(name = "priceMinFilter", required = false) Double priceMinFilter, @RequestParam(name = "priceMaxFilter", required = false) Double priceMaxFilter) {     
+    public ResponseEntity<Object> getAll(@RequestParam(name = "priceMinFilter", required = false) Double priceMinFilter, @RequestParam(name = "priceMaxFilter", required = false) Double priceMaxFilter, @RequestParam(name = "page") int page, @RequestParam(name = "size") int size) {     
 
         try {
-            List<Ingredient> iList = ingredientService.getAll(priceMinFilter, priceMaxFilter);
+            List<Ingredient> iList = ingredientService.getAll(priceMinFilter, priceMaxFilter, page, size);
             return new ResponseEntity<>(iList, HttpStatus.OK);
         } catch (ClientException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
