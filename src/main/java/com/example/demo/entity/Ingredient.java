@@ -27,6 +27,10 @@ public class Ingredient {
 
    public List<StockMovement> addStockMovements(List<StockMovement> stockMovements) {
 
+    if (this.stockMovements == null) {
+        this.stockMovements = new ArrayList<>();
+    }
+
         stockMovements.forEach(stockMovement -> stockMovement.setIngredient(this));
         if (getStockMovements() == null || getStockMovements().isEmpty()){
             return stockMovements;

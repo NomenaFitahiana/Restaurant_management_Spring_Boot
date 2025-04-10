@@ -218,7 +218,7 @@ public class StockMovementRepository implements RepositoryInterface<StockMovemen
         List<StockMovement> stock = new ArrayList<>();
 
         try (Connection connection = dataSource.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("insert into stock_movement (id, quantity, unit, movement_type, creation_datetime, id_ingredient) " + "values (?, ?, ?, ?, ?, ?)" + "returning id, quantity, unit, movement_type, creation_datetime, id_ingredient ");){
+            PreparedStatement preparedStatement = connection.prepareStatement("insert into stock_movement (id, quantity, unit, movement_type, creation_datetime, id_ingredient) " + "values (?, ?, ?, ?, ?, ?)" + "on conflict (id) do nothing " + "returning id, quantity, unit, movement_type, creation_datetime, id_ingredient ");){
             
                 entities.forEach(s -> {
                   try {

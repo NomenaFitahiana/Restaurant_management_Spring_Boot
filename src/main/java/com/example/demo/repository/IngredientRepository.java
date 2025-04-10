@@ -154,6 +154,8 @@ public List<Ingredient> saveAll(List<Ingredient> entities) {
                 }
                 
                 if (entity.getStockMovements() != null && !entity.getStockMovements().isEmpty()) {
+
+                    System.out.println("ReposStocks :" + entity.getStockMovements());
                     entity.getStockMovements().forEach(sm -> sm.setIngredient(entity));
                    savedStocks =  stockMovementCrudOperations.saveAll(entity.getStockMovements());
                    saved.getStockMovements().addAll(savedStocks);
@@ -165,7 +167,9 @@ public List<Ingredient> saveAll(List<Ingredient> entities) {
                         saved.setId(rs.getLong("id"));
                         saved.setName(rs.getString("name"));
                         saved.setPrices(savedPrices);
+                        System.out.println("price: " + saved.getPrices());
                         saved.setStockMovements(savedStocks);
+                        System.out.println("stocks: " + saved.getStockMovements());
                         savedIngredients.add(saved);
                     }
                 }

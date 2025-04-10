@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.Ingredient;
 import com.example.demo.entity.Price;
+import com.example.demo.entity.StockMovement;
 import com.example.demo.repository.IngredientRepository;
 import com.example.demo.service.Exceptions.NotFoundException;
 
@@ -99,4 +100,18 @@ public class IngredientService {
         List<Ingredient> ingredientsSaved = ingredientRepository.saveAll(List.of(ingredient));
         return ingredientsSaved.getFirst();
     }
+    
+    public Ingredient addStocks(Long ingredientId, List<StockMovement> stocksToAdd){
+        Ingredient ingredient = ingredientRepository.findById(ingredientId);
+
+        if (ingredient == null) {
+            throw new NotFoundException("Ingredient not found with ID: " + ingredientId);
+        }
+
+        ingredient.addStockMovements(stocksToAdd);
+        List<Ingredient> ingredientsSaved = ingredientRepository.saveAll(List.of(ingredient));
+        return ingredientsSaved.getFirst();
+
+    }
 }
+

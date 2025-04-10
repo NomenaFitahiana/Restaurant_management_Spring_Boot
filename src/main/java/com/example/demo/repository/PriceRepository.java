@@ -122,7 +122,7 @@ public class PriceRepository implements RepositoryInterface<Price> {
         List<Price> prices = new ArrayList<>();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement =
-                     connection.prepareStatement("insert into price (id, amount, date_value, id_ingredient) values (?, ?, ?, ?)"
+                     connection.prepareStatement("insert into price (id, amount, date_value, id_ingredient) values (?, ?, ?, ?)" + "on conflict (id) do nothing" 
                              + " returning id, amount, date_value, id_ingredient");) {
             entities.forEach(entityToSave -> {
                 try {

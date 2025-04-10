@@ -4,9 +4,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.controller.mapper.IngredientRestMapper;
 import com.example.demo.controller.rest.CreateIngredientPrice;
+import com.example.demo.controller.rest.CreateOrUpdateStockMovement;
 import com.example.demo.controller.rest.IngredientRest;
 import com.example.demo.entity.Ingredient;
 import com.example.demo.entity.Price;
+import com.example.demo.entity.StockMovement;
 import com.example.demo.service.IngredientService;
 import com.example.demo.service.Exceptions.*;
 
@@ -105,6 +107,24 @@ public class IngredientController {
         System.out.println("Rest:" + ingredientRest);
 
         return ResponseEntity.ok().body(ingredientRest);
+    }
+
+    @PutMapping("/ingredients/{ingredientId}/stockMovements")
+    public ResponseEntity<Object> updateIngredientStockMovements(@PathVariable Long ingredientId, @RequestBody List<CreateOrUpdateStockMovement> ingredientStocks){
+        List<StockMovement> stocks = ingredientStocks.stream().map(ingredientStock -> {StockMovement s = new StockMovement();
+            s.setId(ingredientStock.getId());
+            s.setQuantity(ingredientStock.getQuantity());
+            s.setMovementType(ingredientStock.getMovementType());
+            s.setCreationDatetime(ingredientStock.getCreationDatetime());
+            s.setUnit(ingredientStock.getUnit());
+            return s;
+        }
+        ).toList();
+
+        Ingredient ingredient = ingredientService.addStocks(ingredientId, stocks);
+        IngredientRest ingredientRest = ingredientRestMapper.toRest(ingredient);
+        return ResponseEntity.ok().body(ingredientRest);
+
     }
    
     

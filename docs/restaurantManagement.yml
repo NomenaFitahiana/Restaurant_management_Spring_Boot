@@ -1,0 +1,190 @@
+openapi: 3.1.0
+info:
+  title: Restaurant Management API - 2025 [J]
+  description: Restaurant Management API - 2025 [J]
+  version: 1.0.0
+servers:
+  - url: 'https://localhost:8080'
+paths:
+  /ingredients:
+    get:
+      summary: Get list of ingredients
+      description: List of ingredients
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        200:
+          description: List of ingredients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ingredient'
+  /ingredients/{id}/prices:
+    put:
+      summary: Add new prices to a specifc ingredient
+      parameters:
+        - $ref: '#/components/parameters/IngredientIdentifier'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Price'
+        required: true
+      responses:
+        200:
+          description: The specific ingredient with updated price history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ingredient'
+  /ingredients/{id}/stockMovements:
+    put:
+      summary: Add new stock movements to a specifc ingredient
+      parameters:
+        - $ref: '#/components/parameters/IngredientIdentifier'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/StockMovement'
+        required: true
+      responses:
+        200:
+          description: The specific ingredient with updated stockMovement history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ingredient'
+  /dishes:
+    get:
+      summary: Get dishes
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        200:
+          description: List of dishes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dish'
+
+components:
+  parameters:
+    IngredientIdentifier:
+      in: path
+      name: id
+      schema:
+        type: integer
+      required: true
+    Page:
+      in: query
+      name: page
+      schema:
+        type: integer
+        required: false
+    PageSize:
+      in: query
+      name: pageSize
+      schema:
+        type: integer
+        required: false
+  schemas:
+    Dish:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        availableQuantity:
+          type: integer
+        actualPrice:
+          type: number
+          format: float
+        ingredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/DishIngredient'
+    DishIngredient:
+      type: object
+      properties:
+        requiredQuantity:
+          type: number
+          format: float
+        unit:
+          $ref: '#/components/schemas/Unit'
+        ingredient:
+          $ref: '#/components/schemas/IngredientBasicProperty'
+    IngredientBasicProperty:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+    Ingredient:
+      type: object
+      properties:
+        prices:
+          type: array
+          items:
+            $ref: '#/components/schemas/Price'
+        stockMovements:
+          type: array
+          items:
+            $ref: '#/components/schemas/StockMovement'
+        availableQuantity:
+          type: number
+          format: float
+        actualPrice:
+          type: number
+          format: float
+      allOf:
+        - $ref: '#/components/schemas/IngredientBasicProperty'
+    Price:
+      type: object
+      properties:
+        id:
+          type: integer
+        price:
+          type: number
+          format: float
+        dateValue:
+          type: string
+          format: date
+    StockMovement:
+      type: object
+      properties:
+        id:
+          type: integer
+        quantity:
+          type: number
+          format: float
+        unit:
+          $ref: '#/components/schemas/Unit'
+        type:
+          $ref: '#/components/schemas/StockMovementType'
+        creationDatetime:
+          type: string
+          format: date-time
+    StockMovementType:
+      type: string
+      enum:
+        - IN
+        - OUT
+    Unit:
+      type: string
+      enum:
+        - G
+        - U
+        - L
