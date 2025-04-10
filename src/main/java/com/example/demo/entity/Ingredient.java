@@ -9,8 +9,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import com.example.demo.repository.PriceRepository;
-import com.example.demo.repository.StockMovementRepository;
 
 
 @AllArgsConstructor
@@ -19,6 +17,7 @@ import com.example.demo.repository.StockMovementRepository;
 @Data
 @Getter
 @Setter
+@ToString
 public class Ingredient {
     private Long id;
     private String name;
@@ -28,19 +27,16 @@ public class Ingredient {
     private List<StockMovement> stockMovements;
 
    public List<StockMovement> addStockMovements(List<StockMovement> stockMovements) {
-     StockMovementRepository stockMovementRepository = new StockMovementRepository();
 
         stockMovements.forEach(stockMovement -> stockMovement.setIngredient(this));
         if (getStockMovements() == null || getStockMovements().isEmpty()){
             return stockMovements;
         }
         getStockMovements().addAll(stockMovements);
-        stockMovementRepository.saveAll(stockMovements);
         return getStockMovements();
     }
 
     public List<Price> addPrices(List<Price> prices) {
-        PriceRepository priceRepository = new PriceRepository();
 
         if (getPrices() == null || getPrices().isEmpty()){
             return prices;
@@ -48,7 +44,6 @@ public class Ingredient {
         prices.forEach(price -> price.setIngredient(this));
         getPrices().addAll(prices);
 
-        priceRepository.saveAll(prices);
         return getPrices();
     }
 

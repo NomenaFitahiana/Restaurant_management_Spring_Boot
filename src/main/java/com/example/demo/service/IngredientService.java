@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.Ingredient;
+import com.example.demo.entity.Price;
 import com.example.demo.repository.IngredientRepository;
 
 @Service
@@ -77,4 +78,18 @@ public class IngredientService {
    public List<Ingredient> saveAll(List<Ingredient> entity){
     return ingredientRepository.saveAll(entity);
    }
+
+   public Ingredient addPrices(Long ingredientId, List<Price> pricesToAdd) {
+        Ingredient ingredient = ingredientRepository.findById(ingredientId);
+        if (ingredient == null) {
+            throw new IllegalArgumentException("Ingredient not found with ID: " + ingredientId);
+        }
+        System.out.println("price: " );
+        System.out.println("ingredient : " + ingredient);
+        ingredient.addPrices(pricesToAdd);
+        System.out.println("ingredient : " + ingredient);
+
+        List<Ingredient> ingredientsSaved = ingredientRepository.saveAll(List.of(ingredient));
+        return ingredientsSaved.getFirst();
+    }
 }

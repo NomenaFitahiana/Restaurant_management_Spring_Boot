@@ -18,7 +18,7 @@ import com.example.demo.service.Exceptions.NotFoundException;
 public class IngredientRestMapper {
     @Autowired private PriceRestMapper priceRestMapper;
     @Autowired private StockMovementRestMapper stockMovementRestMapper;
-    @Autowired private IngredientRepository ingredientCrudOperations;
+    @Autowired private IngredientRepository ingredientRepository;
 
     public IngredientRest toRest(Ingredient ingredient) {
         List<PriceRest> prices = ingredient.getPrices().stream()
@@ -34,7 +34,7 @@ public class IngredientRestMapper {
         ingredient.setId(newIngredient.getId());
         ingredient.setName(newIngredient.getName());
         try {
-            Ingredient existingIngredient = ingredientCrudOperations.findById(newIngredient.getId());
+            Ingredient existingIngredient = ingredientRepository.findById(newIngredient.getId());
             ingredient.addPrices(existingIngredient.getPrices());
             ingredient.addStockMovements(existingIngredient.getStockMovements());
         } catch (NotFoundException e) {

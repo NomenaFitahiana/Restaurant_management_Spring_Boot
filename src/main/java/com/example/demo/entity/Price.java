@@ -13,6 +13,7 @@ import static java.time.LocalDate.now;
 @Data
 @Getter
 @Setter
+@ToString
 public class Price {
     private Long id;
     private Ingredient ingredient;
@@ -27,5 +28,11 @@ public class Price {
     public Price(Double amount, LocalDate dateValue){
         this.amount = amount;
         this.dateValue = dateValue;
+    }
+
+    public Price(Long id, Double amount, LocalDate dateValue){
+        this.amount = amount;
+        this.dateValue = dateValue;
+        this.id = id;
     }
 }

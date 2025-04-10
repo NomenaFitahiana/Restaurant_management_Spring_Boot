@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 
 import com.example.demo.entity.DishIngredient;
 import com.example.demo.entity.Ingredient;
+import com.example.demo.entity.Price;
+import com.example.demo.entity.StockMovement;
 import com.example.demo.entity.Unit;
 import com.example.demo.repository.mapper.IngredientMapper;
 import com.example.demo.service.Exceptions.NotFoundException;
@@ -126,7 +128,8 @@ public class IngredientRepository implements RepositoryInterface<Ingredient> {
 @Override
 public List<Ingredient> saveAll(List<Ingredient> entities) {
     List<Ingredient> savedIngredients = new ArrayList<>();
-    
+    Ingredient saved = new Ingredient();
+
     try (Connection connection = dataSource.getConnection()) {
         connection.setAutoCommit(false);
         
@@ -141,7 +144,6 @@ public List<Ingredient> saveAll(List<Ingredient> entities) {
                 
                 try (ResultSet rs = statement.executeQuery()) {
                     if (rs.next()) {
-                        Ingredient saved = new Ingredient();
                         saved.setId(rs.getLong("id"));
                         saved.setName(rs.getString("name"));
                         savedIngredients.add(saved);
@@ -150,12 +152,15 @@ public List<Ingredient> saveAll(List<Ingredient> entities) {
                 
                 if (entity.getPrices() != null && !entity.getPrices().isEmpty()) {
                     entity.getPrices().forEach(p -> p.setIngredient(entity));
-                    priceCrudOperations.saveAll(entity.getPrices());
+                  List<Price> savedPrices =   priceCrudOperations.saveAll(entity.getPrices());
+                    saved.getPrices().addAll(savedPrices);
                 }
                 
                 if (entity.getStockMovements() != null && !entity.getStockMovements().isEmpty()) {
                     entity.getStockMovements().forEach(sm -> sm.setIngredient(entity));
-                    stockMovementCrudOperations.saveAll(entity.getStockMovements());
+                   List<StockMovement> savedStocks =  stockMovementCrudOperations.saveAll(entity.getStockMovements());
+                   saved.getStockMovements().addAll(savedStocks);
+
                 }
             }
             

@@ -9,6 +9,7 @@ import lombok.*;
 @Data
 @Getter
 @Setter
+@ToString
 public class DishIngredient {
     private Long id;
     private Ingredient ingredient;

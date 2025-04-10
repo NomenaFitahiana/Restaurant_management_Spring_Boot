@@ -8,6 +8,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class CreateIngredientPrice {
+    private Long id;
     private Double amount;
     private LocalDate dateValue;
 }

@@ -24,10 +24,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor                    
 @RestController
 public class IngredientController {
-     private final IngredientService ingredientService;
+    private final IngredientService ingredientService;
     private final IngredientRestMapper ingredientRestMapper;
 
  
@@ -90,11 +90,11 @@ public class IngredientController {
        
     }
 
-     @PutMapping("/ingredients/{ingredientId}/prices")
+    @PutMapping("/ingredients/{ingredientId}/prices")
     public ResponseEntity<Object> updateIngredientPrices(@PathVariable Long ingredientId, @RequestBody List<CreateIngredientPrice> ingredientPrices) {
         List<Price> prices = ingredientPrices.stream()
                 .map(ingredientPrice ->
-                        new Price(ingredientPrice.getAmount(), ingredientPrice.getDateValue()))
+                        new Price(ingredientPrice.getId(),ingredientPrice.getAmount(), ingredientPrice.getDateValue()))
                 .toList();
         Ingredient ingredient = ingredientService.addPrices(ingredientId, prices);
         IngredientRest ingredientRest = ingredientRestMapper.toRest(ingredient);

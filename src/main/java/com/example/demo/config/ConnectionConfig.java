@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.example.demo.controller.IngredientController;
+import com.example.demo.controller.mapper.IngredientRestMapper;
 import com.example.demo.repository.*;
 import com.example.demo.service.IngredientService;
 
@@ -26,7 +27,7 @@ public class ConnectionConfig {
     }
 
    @Bean
-   IngredientController ingredientController(IngredientService ingredientService){
-    return new IngredientController(ingredientService);
+   IngredientController ingredientController(IngredientService ingredientService, IngredientRestMapper ingredientRestMapper){
+    return new IngredientController(ingredientService, ingredientRestMapper);
    }
 }

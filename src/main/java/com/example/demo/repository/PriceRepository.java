@@ -123,7 +123,6 @@ public class PriceRepository implements RepositoryInterface<Price> {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement =
                      connection.prepareStatement("insert into price (id, amount, date_value, id_ingredient) values (?, ?, ?, ?)"
-                             + " on conflict (id) do update set excluded.amount=amount, excluded.date_value=date_value, excluded.id_ingredient=id_ingredient "
                              + " returning id, amount, date_value, id_ingredient");) {
             entities.forEach(entityToSave -> {
                 try {
