@@ -129,6 +129,8 @@ public class IngredientRepository implements RepositoryInterface<Ingredient> {
 public List<Ingredient> saveAll(List<Ingredient> entities) {
     List<Ingredient> savedIngredients = new ArrayList<>();
     Ingredient saved = new Ingredient();
+    List<StockMovement> savedStocks = new ArrayList<>();
+    List<Price> savedPrices = new ArrayList<>();
 
     try (Connection connection = dataSource.getConnection()) {
         connection.setAutoCommit(false);
@@ -142,25 +144,30 @@ public List<Ingredient> saveAll(List<Ingredient> entities) {
                 statement.setLong(1, entity.getId());
                 statement.setString(2, entity.getName());
                 
-                try (ResultSet rs = statement.executeQuery()) {
-                    if (rs.next()) {
-                        saved.setId(rs.getLong("id"));
-                        saved.setName(rs.getString("name"));
-                        savedIngredients.add(saved);
-                    }
-                }
                 
                 if (entity.getPrices() != null && !entity.getPrices().isEmpty()) {
+                    System.out.println("ReposPrices :" + entity.getPrices());
+
                     entity.getPrices().forEach(p -> p.setIngredient(entity));
-                  List<Price> savedPrices =   priceCrudOperations.saveAll(entity.getPrices());
+                   savedPrices =   priceCrudOperations.saveAll(entity.getPrices());
                     saved.getPrices().addAll(savedPrices);
                 }
                 
                 if (entity.getStockMovements() != null && !entity.getStockMovements().isEmpty()) {
                     entity.getStockMovements().forEach(sm -> sm.setIngredient(entity));
-                   List<StockMovement> savedStocks =  stockMovementCrudOperations.saveAll(entity.getStockMovements());
+                   savedStocks =  stockMovementCrudOperations.saveAll(entity.getStockMovements());
                    saved.getStockMovements().addAll(savedStocks);
 
+                }
+
+                try (ResultSet rs = statement.executeQuery()) {
+                    if (rs.next()) {
+                        saved.setId(rs.getLong("id"));
+                        saved.setName(rs.getString("name"));
+                        saved.setPrices(savedPrices);
+                        saved.setStockMovements(savedStocks);
+                        savedIngredients.add(saved);
+                    }
                 }
             }
             

@@ -92,12 +92,18 @@ public class IngredientController {
 
     @PutMapping("/ingredients/{ingredientId}/prices")
     public ResponseEntity<Object> updateIngredientPrices(@PathVariable Long ingredientId, @RequestBody List<CreateIngredientPrice> ingredientPrices) {
+        System.out.println("ingredientId:" + ingredientId );
+        System.out.println("ingredientPrices:" + ingredientPrices);
+
         List<Price> prices = ingredientPrices.stream()
                 .map(ingredientPrice ->
                         new Price(ingredientPrice.getId(),ingredientPrice.getAmount(), ingredientPrice.getDateValue()))
                 .toList();
+                
         Ingredient ingredient = ingredientService.addPrices(ingredientId, prices);
         IngredientRest ingredientRest = ingredientRestMapper.toRest(ingredient);
+        System.out.println("Rest:" + ingredientRest);
+
         return ResponseEntity.ok().body(ingredientRest);
     }
    

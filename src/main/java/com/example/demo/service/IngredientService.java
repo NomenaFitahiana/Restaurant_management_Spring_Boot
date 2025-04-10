@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.entity.Ingredient;
 import com.example.demo.entity.Price;
 import com.example.demo.repository.IngredientRepository;
+import com.example.demo.service.Exceptions.NotFoundException;
 
 @Service
 public class IngredientService {
@@ -80,12 +81,18 @@ public class IngredientService {
    }
 
    public Ingredient addPrices(Long ingredientId, List<Price> pricesToAdd) {
+        System.out.println("ServiceIngId: " + ingredientId);
+        System.out.println("PriceToAdd: " + pricesToAdd);
+
         Ingredient ingredient = ingredientRepository.findById(ingredientId);
-        if (ingredient == null) {
-            throw new IllegalArgumentException("Ingredient not found with ID: " + ingredientId);
-        }
-        System.out.println("price: " );
+
         System.out.println("ingredient : " + ingredient);
+
+
+        if (ingredient == null) {
+            throw new NotFoundException("Ingredient not found with ID: " + ingredientId);
+        }
+
         ingredient.addPrices(pricesToAdd);
         System.out.println("ingredient : " + ingredient);
 

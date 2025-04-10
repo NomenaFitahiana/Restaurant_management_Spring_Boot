@@ -5,6 +5,7 @@ import lombok.*;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -14,10 +15,8 @@ import java.util.Optional;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Data
 @Getter
 @Setter
-@ToString
 public class Ingredient {
     private Long id;
     private String name;
@@ -34,6 +33,13 @@ public class Ingredient {
         }
         getStockMovements().addAll(stockMovements);
         return getStockMovements();
+    }
+
+    public List<Price> getPrices() {
+        if (prices == null) {
+            prices = new ArrayList<>();
+        }
+        return prices;
     }
 
     public List<Price> addPrices(List<Price> prices) {
@@ -85,5 +91,10 @@ public class Ingredient {
 
     private Optional<Price> findActualPrice() {
         return prices.stream().max(Comparator.comparing(Price::getDateValue));
+    }
+
+    @Override
+    public String toString() {
+        return "Ingredient(id=" + id + ", name=" + name + ", unitPrice=" + unitPrice + ", updatedAt=" + updatedAt + ")";
     }
 }

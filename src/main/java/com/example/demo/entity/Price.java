@@ -5,17 +5,18 @@ import lombok.*;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import static java.time.LocalDate.now;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Data
 @Getter
 @Setter
-@ToString
 public class Price {
     private Long id;
+    @JsonIgnore
     private Ingredient ingredient;
     private Double amount;
     private LocalDate dateValue;
@@ -34,5 +35,10 @@ public class Price {
         this.amount = amount;
         this.dateValue = dateValue;
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "Price(id=" + id + ", amount=" + amount + ", dateValue=" + dateValue + ")";
     }
 }

@@ -11,7 +11,6 @@ import java.time.Instant;
 @Data
 @Getter
 @Setter
-@ToString
 public class StockMovement {
     private Long id;
     private Ingredient ingredient;
