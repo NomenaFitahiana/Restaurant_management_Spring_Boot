@@ -23,4 +23,9 @@ public class Price {
         this.amount = amount;
         this.dateValue = now();
     }
+
+    public Price(Double amount, LocalDate dateValue){
+        this.amount = amount;
+        this.dateValue = dateValue;
+    }
 }

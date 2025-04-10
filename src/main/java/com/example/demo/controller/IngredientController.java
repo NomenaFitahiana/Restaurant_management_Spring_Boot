@@ -2,9 +2,16 @@ package com.example.demo.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.controller.mapper.IngredientRestMapper;
+import com.example.demo.controller.rest.CreateIngredientPrice;
+import com.example.demo.controller.rest.IngredientRest;
 import com.example.demo.entity.Ingredient;
+import com.example.demo.entity.Price;
 import com.example.demo.service.IngredientService;
 import com.example.demo.service.Exceptions.*;
+
+import lombok.RequiredArgsConstructor;
+
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -17,15 +24,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
-
+@RequiredArgsConstructor
 @RestController
 public class IngredientController {
+     private final IngredientService ingredientService;
+    private final IngredientRestMapper ingredientRestMapper;
 
-   private IngredientService ingredientService;
-
-   public IngredientController(IngredientService ingredientService){
-        this.ingredientService = ingredientService;
-   }
+ 
   
     @GetMapping("/ingredients")
     public ResponseEntity<Object> getAll(@RequestParam(name = "priceMinFilter", required = false) Double priceMinFilter, @RequestParam(name = "priceMaxFilter", required = false) Double priceMaxFilter) {     
@@ -85,6 +90,16 @@ public class IngredientController {
        
     }
 
+     @PutMapping("/ingredients/{ingredientId}/prices")
+    public ResponseEntity<Object> updateIngredientPrices(@PathVariable Long ingredientId, @RequestBody List<CreateIngredientPrice> ingredientPrices) {
+        List<Price> prices = ingredientPrices.stream()
+                .map(ingredientPrice ->
+                        new Price(ingredientPrice.getAmount(), ingredientPrice.getDateValue()))
+                .toList();
+        Ingredient ingredient = ingredientService.addPrices(ingredientId, prices);
+        IngredientRest ingredientRest = ingredientRestMapper.toRest(ingredient);
+        return ResponseEntity.ok().body(ingredientRest);
+    }
    
     
     
