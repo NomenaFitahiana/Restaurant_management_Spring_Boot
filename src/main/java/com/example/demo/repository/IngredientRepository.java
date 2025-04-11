@@ -128,9 +128,6 @@ public class IngredientRepository implements RepositoryInterface<Ingredient> {
 @Override
 public List<Ingredient> saveAll(List<Ingredient> entities) {
     List<Ingredient> savedIngredients = new ArrayList<>();
-    Ingredient saved = new Ingredient();
-    List<StockMovement> savedStocks = new ArrayList<>();
-    List<Price> savedPrices = new ArrayList<>();
 
     try (Connection connection = dataSource.getConnection()) {
         connection.setAutoCommit(false);
@@ -141,25 +138,36 @@ public List<Ingredient> saveAll(List<Ingredient> entities) {
                 "RETURNING id, name")) {
             
             for (Ingredient entity : entities) {
+                Ingredient saved = new Ingredient();
+                List<Price> savedPrices = new ArrayList<>();
+                List<StockMovement> savedStocks = new ArrayList<>();
+
                 statement.setLong(1, entity.getId());
                 statement.setString(2, entity.getName());
                 
-                
                 if (entity.getPrices() != null && !entity.getPrices().isEmpty()) {
                     System.out.println("ReposPrices :" + entity.getPrices());
-
                     entity.getPrices().forEach(p -> p.setIngredient(entity));
-                   savedPrices =   priceCrudOperations.saveAll(entity.getPrices());
-                    saved.getPrices().addAll(savedPrices);
+                    savedPrices = priceCrudOperations.saveAll(entity.getPrices());
+                    System.out.println("prix: " + savedPrices);
+                } else {
+                    if (entity.getId() != null) {
+                        savedPrices = priceCrudOperations.findByIdIngredient(entity.getId());
+                    }
+                    System.out.println("The price is empty");
                 }
                 
+                // Gestion des stocks
                 if (entity.getStockMovements() != null && !entity.getStockMovements().isEmpty()) {
-
                     System.out.println("ReposStocks :" + entity.getStockMovements());
                     entity.getStockMovements().forEach(sm -> sm.setIngredient(entity));
-                   savedStocks =  stockMovementCrudOperations.saveAll(entity.getStockMovements());
-                   saved.getStockMovements().addAll(savedStocks);
-
+                    savedStocks = stockMovementCrudOperations.saveAll(entity.getStockMovements());
+                    System.out.println("Stock: " + savedStocks);
+                } else {
+                    if (entity.getId() != null) {
+                        savedStocks = stockMovementCrudOperations.findByIdIngredient(entity.getId());
+                    }
+                    System.out.println("The stock is empty");
                 }
 
                 try (ResultSet rs = statement.executeQuery()) {
@@ -181,9 +189,10 @@ public List<Ingredient> saveAll(List<Ingredient> entities) {
             connection.rollback();
             throw new ServerException(e);
         }
+    } catch (SQLException e) {
+        throw new ServerException(e);
     }
 }
-
     public List<DishIngredient> findByDishId(Long dishId) {
         List<DishIngredient> dishIngredients = new ArrayList<>();
         try (Connection connection = dataSource.getConnection();
