@@ -1,6 +1,6 @@
 package com.example.demo.entity;
 
-import java.util.List;
+import java.util.*;
 
 import lombok.*;
 

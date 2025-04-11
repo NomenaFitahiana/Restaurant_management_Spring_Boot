@@ -22,11 +22,11 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @GetMapping
+    @GetMapping("/bestSales")
     public ResponseEntity<Object> getBestSellingDishes(
-            @RequestParam int limit,
-            @RequestParam LocalDate startDate,
-            @RequestParam LocalDate endDate) {
+            @RequestParam (name = "limit") int limit,
+            @RequestParam (name = "startDate") LocalDate startDate,
+            @RequestParam (name = "endDate") LocalDate endDate) {
 
         List<OrderRest> bestSellingList = orderService.findBestSellingDishes(limit, startDate, endDate);
 

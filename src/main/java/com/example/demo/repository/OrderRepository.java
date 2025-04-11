@@ -135,7 +135,7 @@ public class OrderRepository  implements RepositoryInterface<Order>{
                      "FROM orders o " +
                      "JOIN order_status os ON o.id = os.id_order " +
                      "WHERE os.status = 'FINISHED' " +
-                     "AND os.status_date BETWEEN ? AND ? " +
+                     "AND os.creation_date BETWEEN ? AND ? " +
                      "GROUP BY o.id, o.order_references, o.creation_date";
 
         try (Connection connection = dataSource.getConnection();

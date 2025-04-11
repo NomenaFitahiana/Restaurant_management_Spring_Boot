@@ -3,7 +3,7 @@ package com.example.demo.entity;
 import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import lombok.*;
