@@ -1,4 +1,4 @@
-/*package com.example.demo.repository;
+package com.example.demo.repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -116,4 +116,4 @@ public class DishRepository implements RepositoryInterface<Dish> {
             }
         }
     }
-}*/
+}

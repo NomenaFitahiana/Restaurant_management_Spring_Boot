@@ -20,7 +20,7 @@ public class Dish {
     private List<DishIngredient> dishIngredients;
     private Double price;
 
-   /* public Double getGrossMargin() {
+   public Double getGrossMargin() {
         return getPrice() - getTotalIngredientsCost();
     }
 
@@ -66,5 +66,5 @@ public class Dish {
             allQuantitiesPossible.add(roundedQuantityPossible);
         }
         return allQuantitiesPossible.stream().min(Double::compare).orElse(0.0);
-    }*/
+    }
 }
