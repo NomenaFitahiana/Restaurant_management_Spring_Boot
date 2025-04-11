@@ -1,4 +1,4 @@
-/*package com.example.demo.controller;
+package com.example.demo.controller;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.controller.rest.DishRest;
 import com.example.demo.entity.Dish;
 
 @RestController
@@ -24,7 +25,15 @@ public class DishController{
         this.dishService = dishService;
     }
 
-    @GetMapping("/{id}/processingTime")
+    @GetMapping("/dishes")
+    public ResponseEntity<Object> getDishes(
+            @RequestParam(name = "page") Integer page,
+            @RequestParam(name = "size") Integer size) {
+                List<DishRest> dishes = dishService.getAll(page, size);
+        return new ResponseEntity<>(dishes, HttpStatus.OK);
+    }
+
+   /* @GetMapping("/{id}/processingTime")
     public ResponseEntity<Object> getProcessingTime(
             @PathVariable Long id,
             @RequestParam LocalDate startDate,
@@ -35,7 +44,6 @@ public class DishController{
                 ProcessingTimeResponse response = dishService.calculateProcessingTime(id, startDate, endDate, unit, calculationType)
         
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+    }*/
 
 }
-*/
