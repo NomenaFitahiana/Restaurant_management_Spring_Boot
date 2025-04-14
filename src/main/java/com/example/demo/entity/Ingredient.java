@@ -62,6 +62,10 @@ public class Ingredient {
         return findActualPrice().orElse(new Price(0.0)).getAmount();
     }
 
+    public StockMovement getActualStock(){
+        return findActualStock().orElse(new StockMovement());
+    }
+
     public Double getAvailableQuantity() {
         return getAvailableQuantityAt(Instant.now());
     }
@@ -97,6 +101,9 @@ public class Ingredient {
         return prices.stream().max(Comparator.comparing(Price::getDateValue));
     }
 
+    private Optional<StockMovement> findActualStock(){
+        return stockMovements.stream().max(Comparator.comparing(StockMovement::getCreationDatetime));
+    }
     @Override
     public String toString() {
         return "Ingredient(id=" + id + ", name=" + name + ", unitPrice=" + unitPrice + ", updatedAt=" + updatedAt + ")";

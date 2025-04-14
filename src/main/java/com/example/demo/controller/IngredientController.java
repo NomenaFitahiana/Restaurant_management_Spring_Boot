@@ -94,6 +94,7 @@ public class IngredientController {
 
     @PutMapping("/ingredients/{ingredientId}/prices")
     public ResponseEntity<Object> updateIngredientPrices(@PathVariable Long ingredientId, @RequestBody List<CreateIngredientPrice> ingredientPrices) {
+      try {
         System.out.println("ingredientId:" + ingredientId );
         System.out.println("ingredientPrices:" + ingredientPrices);
 
@@ -107,10 +108,20 @@ public class IngredientController {
         System.out.println("Rest:" + ingredientRest);
 
         return ResponseEntity.ok().body(ingredientRest);
+
+      } catch (NotFoundException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+      }catch (ClientException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }catch (ServerException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }    
+
     }
 
     @PutMapping("/ingredients/{ingredientId}/stockMovements")
     public ResponseEntity<Object> updateIngredientStockMovements(@PathVariable Long ingredientId, @RequestBody List<CreateOrUpdateStockMovement> ingredientStocks){
+       try {
         List<StockMovement> stocks = ingredientStocks.stream().map(ingredientStock -> {StockMovement s = new StockMovement();
             s.setId(ingredientStock.getId());
             s.setQuantity(ingredientStock.getQuantity());
@@ -125,9 +136,17 @@ public class IngredientController {
         IngredientRest ingredientRest = ingredientRestMapper.toRest(ingredient);
         return ResponseEntity.ok().body(ingredientRest);
 
+       } catch (NotFoundException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+      }catch (ClientException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }catch (ServerException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }   
     }
    
     
     
 }
+
 
