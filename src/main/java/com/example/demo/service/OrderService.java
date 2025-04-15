@@ -25,6 +25,10 @@ public class OrderService {
         this.dishOrderRepository = dishOrderRepository;
     }
 
+    public Order getOrderByRef(String ref){
+        return orderRepository.findOrderByReference(ref);
+    }
+
     public List<OrderRest> findBestSellingDishes(int limit, LocalDate startDate, LocalDate endDate) {
         java.sql.Date sqlStartDate = java.sql.Date.valueOf(startDate);
         java.sql.Date sqlEndDate = java.sql.Date.valueOf(endDate);

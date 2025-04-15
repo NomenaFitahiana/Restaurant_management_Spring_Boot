@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
-import com.example.demo.entity.Criteria;
 import com.example.demo.entity.DishOrder;
 import com.example.demo.entity.Order;
 import com.example.demo.entity.OrderStatus;
@@ -29,6 +28,32 @@ public class OrderRepository  implements RepositoryInterface<Order>{
             throw new RuntimeException(e);
         }
         return orders;
+    }
+
+    public Order findOrderByReference(String ref){
+        Order order = new Order();
+
+        try (Connection connection = dataSource.getConnection();
+            PreparedStatement statement = connection.prepareStatement("select o.id, o.order_references, o.creation_date" + " from orders o where order_references = ?")){
+            statement.setString(1, ref);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if(resultSet.next()){
+                order.setId(resultSet.getLong("id"));
+                order.setReferences(resultSet.getString("order_references"));
+                order.setDishesOrder(dishOrderCrudOperations.getAllDishInsideAnOrder(order.getId()));
+                order.setCreationDate(resultSet.getDate("creation_date"));
+                order.setAmount(order.getTotalAmount());
+                order.setOrderStatus(mapOrderStatus(order.getId()));
+
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return order;
     }
 
     @Override
