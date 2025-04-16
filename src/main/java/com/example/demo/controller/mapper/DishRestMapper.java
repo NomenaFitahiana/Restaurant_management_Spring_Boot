@@ -7,7 +7,6 @@ import com.example.demo.controller.rest.DishIngredientRest;
 import com.example.demo.controller.rest.DishRest;
 import com.example.demo.entity.Dish;
 
-import lombok.RequiredArgsConstructor;
 
 public class DishRestMapper implements Function<Dish, DishRest> {
     

@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
-import com.example.demo.entity.Criteria;
 import com.example.demo.entity.DishOrder;
 import com.example.demo.entity.Order;
 import com.example.demo.entity.OrderStatus;

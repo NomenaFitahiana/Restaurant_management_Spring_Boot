@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.controller.rest.OrderRest;
+import com.example.demo.controller.rest.OrderSelledRest;
 import com.example.demo.entity.DishOrder;
 import com.example.demo.entity.Order;
 import com.example.demo.entity.OrderStatistics;
@@ -29,7 +29,7 @@ public class OrderService {
         return orderRepository.findOrderByReference(ref);
     }
 
-    public List<OrderRest> findBestSellingDishes(int limit, LocalDate startDate, LocalDate endDate) {
+    public List<OrderSelledRest> findBestSellingDishes(int limit, LocalDate startDate, LocalDate endDate) {
         java.sql.Date sqlStartDate = java.sql.Date.valueOf(startDate);
         java.sql.Date sqlEndDate = java.sql.Date.valueOf(endDate);
 
@@ -55,7 +55,7 @@ public class OrderService {
         return dishStats.values().stream()
                 .sorted((a, b) -> Double.compare(b.getQuantity(), a.getQuantity()))
                 .limit(limit)
-                .map(stats -> new OrderRest(stats.getDishName(), (int) stats.getQuantity(), stats.getAmount()))
+                .map(stats -> new OrderSelledRest(stats.getDishName(), (int) stats.getQuantity(), stats.getAmount()))
                 .collect(Collectors.toList());
     }
 }

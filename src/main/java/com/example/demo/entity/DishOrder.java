@@ -2,6 +2,7 @@ package com.example.demo.entity;
 
 import java.util.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.*;
 
@@ -13,6 +14,7 @@ import lombok.*;
 @Setter
 public class DishOrder {
     private Long id;
+    @JsonIgnore
     private Order order;
     private Dish dish;
     private double quantity;

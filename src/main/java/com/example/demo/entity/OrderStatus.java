@@ -2,6 +2,8 @@ package com.example.demo.entity;
 
 import java.time.Instant;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.*;
 
 @AllArgsConstructor
@@ -14,6 +16,7 @@ public class OrderStatus {
     Long id;
     Instant statusDate;
     Status status;
+    @JsonIgnore
     Order order;
 
     @Override

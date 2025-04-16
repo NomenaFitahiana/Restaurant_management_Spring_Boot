@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.controller.mapper.OrderMapper;
 import com.example.demo.controller.rest.OrderRest;
+import com.example.demo.controller.rest.OrderSelledRest;
 import com.example.demo.service.OrderService;
 import com.example.demo.service.Exceptions.NotFoundException;
 import com.example.demo.entity.Order;
@@ -20,18 +22,21 @@ import com.example.demo.entity.Order;
 public class OrderController {
 
     private final OrderService orderService;
+    private final OrderMapper orderMapper;
 
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
+        this.orderMapper = new OrderMapper();
     }
 
     @GetMapping("/order/{reference}")
     public ResponseEntity<Object> getOrderByRef(@PathVariable ("reference") String ref){
       try {
+        
         Order order = orderService.getOrderByRef(ref);
-        System.out.println("order" + ref);
+        OrderRest OrderRest = orderMapper.apply(order);
 
-        return new ResponseEntity<>(order, HttpStatus.OK);
+        return new ResponseEntity<>(OrderRest, HttpStatus.OK);
       } catch (Exception e) {
         throw new NotFoundException(e);
       }
@@ -43,7 +48,7 @@ public class OrderController {
             @RequestParam (name = "startDate") LocalDate startDate,
             @RequestParam (name = "endDate") LocalDate endDate) {
 
-        List<OrderRest> bestSellingList = orderService.findBestSellingDishes(limit, startDate, endDate);
+        List<OrderSelledRest> bestSellingList = orderService.findBestSellingDishes(limit, startDate, endDate);
 
         return new ResponseEntity<>(bestSellingList, HttpStatus.OK) ;
     }
